@@ -1,0 +1,221 @@
+from __future__ import annotations
+
+from collections import Counter
+from typing import Any
+
+
+def get_ui_tokens() -> dict[str, str]:
+    # Reference-inspired palette adapted to local app assets.
+    return {
+        "bg": "#f3f4f0",
+        "surface": "#ffffff",
+        "text": "#131515",
+        "muted": "#6e7477",
+        "border": "#e3e5df",
+        "brand": "#5f8f2f",
+        "brand_dark": "#4d7728",
+        "sold_out": "#9aa0a6",
+        "card_title": "#111111",
+    }
+
+
+def build_category_guide(menus: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    category_order = ["burger", "side", "drink"]
+    labels = {
+        "all": "전체",
+        "burger": "버거",
+        "side": "사이드",
+        "drink": "음료",
+    }
+    markers = {
+        "all": "ALL",
+        "burger": "BG",
+        "side": "SD",
+        "drink": "DK",
+    }
+
+    counts = Counter(menu.get("category", "") for menu in menus)
+    guide = [
+        {
+            "id": "all",
+            "label": labels["all"],
+            "marker": markers["all"],
+            "count": len(menus),
+        }
+    ]
+
+    for category in category_order:
+        if counts.get(category, 0) == 0:
+            continue
+        guide.append(
+            {
+                "id": category,
+                "label": labels[category],
+                "marker": markers[category],
+                "count": counts[category],
+            }
+        )
+    return guide
+
+
+def resolve_menu_description(menu: dict[str, Any]) -> str:
+    local_descriptions = {
+        1: "시그니처 비프 패티와 토마토, 양상추를 조합한 대표 버거",
+        2: "진한 치즈 풍미와 촉촉한 패티 밸런스를 살린 클래식 치즈 버거",
+        3: "바삭한 식감과 담백한 감자 풍미를 살린 인기 사이드 메뉴",
+        4: "버거와 함께 즐기기 좋은 시원한 탄산 음료",
+    }
+    if menu.get("id") in local_descriptions:
+        return local_descriptions[int(menu["id"])]
+
+    category = menu.get("category", "")
+    if category == "burger":
+        return "매장에서 빠르게 제공되는 버거 메뉴"
+    if category == "side":
+        return "메인 메뉴와 잘 어울리는 사이드 메뉴"
+    if category == "drink":
+        return "식사와 함께 즐기는 음료 메뉴"
+    return "키오스크에서 주문 가능한 메뉴"
+
+
+def build_theme_css(tokens: dict[str, str]) -> str:
+    return f"""
+    <style>
+      :root {{
+        --bg: {tokens['bg']};
+        --surface: {tokens['surface']};
+        --text: {tokens['text']};
+        --muted: {tokens['muted']};
+        --border: {tokens['border']};
+        --brand: {tokens['brand']};
+        --brand-dark: {tokens['brand_dark']};
+        --sold-out: {tokens['sold_out']};
+        --card-title: {tokens['card_title']};
+      }}
+
+      .stApp {{
+        background: linear-gradient(180deg, #f7f8f5 0%, var(--bg) 100%);
+      }}
+
+      [data-testid="stSidebarNav"],
+      [data-testid="stSidebarNavItems"] {{
+        display: none !important;
+      }}
+
+      .top-nav {{
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 14px 20px;
+        margin-bottom: 18px;
+      }}
+
+      .top-nav .menu-item {{
+        display: inline-block;
+        margin-right: 24px;
+        color: var(--text);
+        font-weight: 700;
+        font-size: 18px;
+      }}
+
+      .top-nav .menu-item.active {{
+        color: var(--brand);
+        border-bottom: 3px solid var(--brand);
+      }}
+
+      .order-cta {{
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 22px;
+        border-radius: 999px;
+        min-height: 44px;
+        font-weight: 700;
+        color: #ffffff;
+        background: var(--brand);
+      }}
+
+      .stButton > button[kind="primary"],
+      .stDownloadButton > button[kind="primary"] {{
+        background: var(--brand);
+        border-color: var(--brand);
+        color: #ffffff;
+      }}
+
+      .stButton > button[kind="primary"]:hover,
+      .stDownloadButton > button[kind="primary"]:hover {{
+        background: var(--brand-dark);
+        border-color: var(--brand-dark);
+      }}
+
+      .stButton > button[kind="primary"]:focus,
+      .stDownloadButton > button[kind="primary"]:focus {{
+        box-shadow: 0 0 0 0.2rem rgba(95, 143, 47, 0.25);
+      }}
+
+      .category-rail {{
+        background: rgba(255, 255, 255, 0.7);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 10px;
+      }}
+
+      .category-pill {{
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        min-height: 44px;
+        padding: 8px 10px;
+        margin-bottom: 8px;
+      }}
+
+      .category-pill.active {{
+        border-color: var(--brand);
+        background: #f4f8ec;
+      }}
+
+      .menu-card {{
+        border: 1px solid var(--border);
+        background: var(--surface);
+        border-radius: 16px;
+        padding: 14px;
+        min-height: 260px;
+      }}
+
+      .menu-card .title {{
+        color: var(--text);
+        font-size: 28px;
+        font-weight: 800;
+        margin-bottom: 6px;
+      }}
+
+      .menu-card .price {{
+        color: var(--card-title);
+        font-size: 24px;
+        font-weight: 700;
+      }}
+
+      .menu-card .status {{
+        display: inline-block;
+        border-radius: 999px;
+        padding: 5px 10px;
+        font-size: 12px;
+        font-weight: 700;
+      }}
+
+      .status.available {{
+        color: var(--brand-dark);
+        background: #edf4df;
+      }}
+
+      .status.sold-out {{
+        color: #ffffff;
+        background: var(--sold-out);
+      }}
+
+      .cart-panel-title {{
+        font-size: 26px;
+        font-weight: 800;
+        margin-bottom: 12px;
+      }}
+    </style>
+    """

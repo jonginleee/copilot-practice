@@ -1,0 +1,27 @@
+from app.schemas.cart import CartItem
+
+
+class CartRepository:
+    _store: dict[int, CartItem] = {}
+
+    def __init__(self) -> None:
+        pass
+
+    def get_item(self, menu_id: int) -> CartItem | None:
+        return self._store.get(menu_id)
+
+    def get_all(self) -> list[CartItem]:
+        return list(self._store.values())
+
+    def save_item(self, item: CartItem) -> CartItem:
+        self._store[item.menu_id] = item
+        return item
+
+    def remove_item(self, menu_id: int) -> bool:
+        if menu_id not in self._store:
+            return False
+        del self._store[menu_id]
+        return True
+
+    def clear(self) -> None:
+        self._store.clear()

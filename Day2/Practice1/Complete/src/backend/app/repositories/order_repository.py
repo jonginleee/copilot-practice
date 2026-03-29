@@ -1,0 +1,32 @@
+from sqlalchemy.orm import Session
+
+from app.db.models import Order, OrderItem
+from app.schemas.cart import Cart
+
+
+class OrderRepository:
+    def __init__(self, db: Session) -> None:
+        self._db = db
+
+    def create_order(self, cart: Cart) -> Order:
+        order = Order(total_price=cart.total_price)
+        self._db.add(order)
+        self._db.flush()
+
+        order_items = [
+            OrderItem(
+                order_id=order.id,
+                menu_id=item.menu_id,
+                name=item.name,
+                category=item.category,
+                image_url=item.image_url,
+                price=item.price,
+                quantity=item.quantity,
+                subtotal=item.subtotal,
+            )
+            for item in cart.items
+        ]
+        self._db.add_all(order_items)
+        self._db.commit()
+        self._db.refresh(order)
+        return order

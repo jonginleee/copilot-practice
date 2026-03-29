@@ -1,0 +1,18 @@
+from pydantic import BaseModel
+
+
+class OrderedItem(BaseModel):
+    menu_id: int
+    name: str
+    category: str
+    image_url: str
+    price: int
+    quantity: int
+    subtotal: int
+
+
+class OrderResponse(BaseModel):
+    order_number: int
+    timestamp: str
+    total_price: int
+    items: list[OrderedItem]

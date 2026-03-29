@@ -1,0 +1,10 @@
+from pydantic import BaseModel
+
+
+class MenuItem(BaseModel):
+    id: int
+    name: str
+    category: str
+    price: int
+    image_url: str
+    is_sold_out: bool

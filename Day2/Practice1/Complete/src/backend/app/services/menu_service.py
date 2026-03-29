@@ -1,0 +1,10 @@
+from app.repositories.menu_repository import MenuRepository
+from app.schemas.menu import MenuItem
+
+
+class MenuService:
+    def __init__(self, repository: MenuRepository | None = None) -> None:
+        self._repository = repository or MenuRepository()
+
+    def get_menus(self, category: str | None = None) -> list[MenuItem]:
+        return self._repository.list_menus(category=category)

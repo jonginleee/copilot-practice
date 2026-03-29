@@ -1,0 +1,34 @@
+[
+  {
+    "id": 1,
+    "name": "Classic Burger",
+    "category": "burger",
+    "price": 6500,
+    "image_url": "http://127.0.0.1:8000/static/images/burger_menu_classic_burger.png",
+    "is_sold_out": false
+  },
+  {
+    "id": 2,
+    "name": "Cheese Burger",
+    "category": "burger",
+    "price": 7000,
+    "image_url": "http://127.0.0.1:8000/static/images/burger_menu_cheese_burger.png",
+    "is_sold_out": false
+  },
+  {
+    "id": 3,
+    "name": "French Fries",
+    "category": "side",
+    "price": 3000,
+    "image_url": "http://127.0.0.1:8000/static/images/burger_menu_french_fries.png",
+    "is_sold_out": false
+  },
+  {
+    "id": 4,
+    "name": "Cola",
+    "category": "drink",
+    "price": 2000,
+    "image_url": "http://127.0.0.1:8000/static/images/burger_menu_coke.png",
+    "is_sold_out": true
+  }
+]

@@ -1,0 +1,72 @@
+from __future__ import annotations
+
+from typing import Any
+
+import requests
+
+API_BASE_URL = "http://127.0.0.1:8000"
+REQUEST_TIMEOUT = 5
+
+
+class ApiClientError(Exception):
+    def __init__(self, message: str, status_code: int | None = None) -> None:
+        super().__init__(message)
+        self.status_code = status_code
+
+
+def _request(method: str, path: str, json_body: dict[str, Any] | None = None) -> dict[str, Any]:
+    url = f"{API_BASE_URL}{path}"
+    try:
+        response = requests.request(method, url, json=json_body, timeout=REQUEST_TIMEOUT)
+    except requests.RequestException as exc:
+        raise ApiClientError(f"네트워크 오류: {exc}") from exc
+
+    if response.status_code >= 400:
+        message = _map_error_message(response)
+        raise ApiClientError(message, status_code=response.status_code)
+
+    return response.json()
+
+
+def _map_error_message(response: requests.Response) -> str:
+    status = response.status_code
+    detail = None
+    try:
+        data = response.json()
+        detail = data.get("detail") if isinstance(data, dict) else None
+    except ValueError:
+        detail = None
+
+    if status == 400:
+        return detail or "요청을 처리할 수 없습니다."
+    if status == 404:
+        return detail or "대상을 찾을 수 없습니다."
+    if status == 422:
+        return "입력값을 확인해주세요."
+    if status >= 500:
+        return "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
+    return detail or f"요청 실패 (status={status})"
+
+
+def get_cart() -> dict[str, Any]:
+    return _request("GET", "/cart")
+
+
+def add_cart_item(menu_id: int, quantity: int) -> dict[str, Any]:
+    return _request("POST", "/cart/items", json_body={"menu_id": menu_id, "quantity": quantity})
+
+
+def update_cart_item(menu_id: int, quantity: int) -> dict[str, Any]:
+    return _request("PUT", f"/cart/items/{menu_id}", json_body={"quantity": quantity})
+
+
+def remove_cart_item(menu_id: int) -> dict[str, Any]:
+    return _request("DELETE", f"/cart/items/{menu_id}")
+
+
+def clear_cart() -> dict[str, Any]:
+    return _request("DELETE", "/cart")
+
+
+def create_order() -> dict[str, Any]:
+    return _request("POST", "/orders")

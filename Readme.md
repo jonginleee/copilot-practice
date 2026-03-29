@@ -1,2 +1,2 @@
 
-# GitHub Copilot 과정 평가
+# GitHub Copilot 과정

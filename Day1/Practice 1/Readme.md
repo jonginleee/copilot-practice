@@ -2,7 +2,7 @@
 
 https://code.visualstudio.com/download 에서 Visaul Studio Code를 설치합니다. 최신 버전 설치를 권장합니다.
 
-![alt text](image.png)
+![alt text](images/image.png)
 
 # 2. Python 3.13 설치하기
 

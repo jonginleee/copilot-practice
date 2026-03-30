@@ -438,3 +438,25 @@ description: "FastAPI API 사용 가이드를 작성할 때 사용하는 스킬.
 ```
 이 프로젝트의 키오스크 연동 개발자를 위해 주문 부분에 한해서 FastAPI 사용 가이드를 작성해줘.
 ```
+
+### Step 10. 외부에서 Skill 다운로드 해보기
+
+1. Awesome GitHub Copilot [https://awesome-copilot.github.com/](https://awesome-copilot.github.com/)에 들어갑니다.
+
+- 만약 해당 링크를 이용할 수 없는 경우 [https://github.com/github/awesome-copilot/tree/main/skills/pytest-coverage](https://github.com/github/awesome-copilot/tree/main/skills/pytest-coverage)에서 SKILL.md 내용을 복사해 스킬을 만듭니다.
+
+2. `Skills`를 클릭합니다.
+
+3. `pytest`를 검색합니다.
+
+4. `Download`를 클릭합니다.
+
+5. 받은 파일의 압축을 풀고 `.github/skills` 폴더에 압축을 푼 폴더를 복사해 붙여 넣습니다.
+
+6. 아래 프롬프트를 입력해봅니다.
+
+```
+이 프로젝트에서 pytest coverage를 100%까지 올려줘
+```
+
+7. `pytest-coverage` 스킬을 이용해 커버리지를 높이는 작업을 하는 지 확인합니다.

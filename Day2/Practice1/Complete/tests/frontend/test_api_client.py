@@ -16,6 +16,10 @@ ApiClientError = api_client.ApiClientError
 _map_error_message = api_client._map_error_message
 add_cart_item = api_client.add_cart_item
 create_order = api_client.create_order
+get_cart = api_client.get_cart
+update_cart_item = api_client.update_cart_item
+remove_cart_item = api_client.remove_cart_item
+clear_cart = api_client.clear_cart
 
 
 def _mock_response(status_code: int, payload: dict | None = None) -> Mock:
@@ -63,3 +67,72 @@ def test_create_order_success() -> None:
 
     assert payload["order_number"] == 1
     assert payload["timestamp"].endswith("Z")
+
+
+def test_request_raises_api_client_error_on_network_error() -> None:
+    with patch.object(
+        api_client.requests,
+        "request",
+        side_effect=api_client.requests.RequestException("timeout"),
+    ):
+        with pytest.raises(ApiClientError) as exc_info:
+            get_cart()
+
+    assert "네트워크 오류" in str(exc_info.value)
+    assert exc_info.value.status_code is None
+
+
+def test_map_error_message_400_without_detail() -> None:
+    response = _mock_response(400, {})
+    assert _map_error_message(response) == "요청을 처리할 수 없습니다."
+
+
+def test_map_error_message_with_invalid_json() -> None:
+    # payload=None causes response.json() to raise ValueError
+    response = _mock_response(400, None)
+    assert _map_error_message(response) == "요청을 처리할 수 없습니다."
+
+
+def test_map_error_message_500() -> None:
+    response = _mock_response(500, None)
+    assert _map_error_message(response) == "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
+
+
+def test_map_error_message_unknown_status() -> None:
+    # No detail → falls back to "요청 실패 (status=418)"
+    response = _mock_response(418, {})
+    result = _map_error_message(response)
+    assert "418" in result
+
+
+def test_map_error_message_404_without_detail() -> None:
+    response = _mock_response(404, {})
+    assert _map_error_message(response) == "대상을 찾을 수 없습니다."
+
+
+def test_get_cart_success() -> None:
+    response = _mock_response(200, {"items": [], "total_price": 0})
+    with patch.object(api_client.requests, "request", return_value=response):
+        data = get_cart()
+    assert data["total_price"] == 0
+
+
+def test_update_cart_item_success() -> None:
+    response = _mock_response(200, {"items": [{"menu_id": 1, "quantity": 3}], "total_price": 15000})
+    with patch.object(api_client.requests, "request", return_value=response):
+        data = update_cart_item(1, 3)
+    assert data["items"][0]["quantity"] == 3
+
+
+def test_remove_cart_item_success() -> None:
+    response = _mock_response(200, {"items": [], "total_price": 0})
+    with patch.object(api_client.requests, "request", return_value=response):
+        data = remove_cart_item(1)
+    assert data["items"] == []
+
+
+def test_clear_cart_success() -> None:
+    response = _mock_response(200, {"items": [], "total_price": 0})
+    with patch.object(api_client.requests, "request", return_value=response):
+        data = clear_cart()
+    assert data["total_price"] == 0

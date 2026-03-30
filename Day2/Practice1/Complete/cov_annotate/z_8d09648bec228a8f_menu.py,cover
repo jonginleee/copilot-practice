@@ -1,0 +1,12 @@
+> from fastapi import APIRouter, Query
+  
+> from app.schemas.menu import MenuItem
+> from app.services.menu_service import MenuService
+  
+> router = APIRouter(tags=["menus"])
+> menu_service = MenuService()
+  
+  
+> @router.get("/menus", response_model=list[MenuItem])
+> def get_menus(category: str | None = Query(default=None)) -> list[MenuItem]:
+>     return menu_service.get_menus(category=category)

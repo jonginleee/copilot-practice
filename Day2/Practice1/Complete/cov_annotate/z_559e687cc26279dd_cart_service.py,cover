@@ -1,0 +1,71 @@
+> from fastapi import HTTPException
+  
+> from app.repositories.cart_repository import CartRepository
+> from app.repositories.menu_repository import MenuRepository
+> from app.schemas.cart import Cart, CartItem, CartItemRequest
+  
+  
+> class CartService:
+>     def __init__(
+>         self,
+>         cart_repository: CartRepository | None = None,
+>         menu_repository: MenuRepository | None = None,
+>     ) -> None:
+>         self._cart_repo = cart_repository or CartRepository()
+>         self._menu_repo = menu_repository or MenuRepository()
+  
+>     def _build_cart(self) -> Cart:
+>         items = self._cart_repo.get_all()
+>         total_price = sum(item.subtotal for item in items)
+>         return Cart(items=items, total_price=total_price)
+  
+>     def add_item(self, request: CartItemRequest) -> Cart:
+>         menus = self._menu_repo.list_menus()
+>         menu = next((m for m in menus if m.id == request.menu_id), None)
+>         if menu is None:
+>             raise HTTPException(status_code=404, detail="메뉴를 찾을 수 없습니다.")
+>         if menu.is_sold_out:
+>             raise HTTPException(status_code=400, detail="품절된 메뉴입니다.")
+  
+>         existing = self._cart_repo.get_item(request.menu_id)
+>         new_quantity = (existing.quantity if existing else 0) + request.quantity
+>         item = CartItem(
+>             menu_id=menu.id,
+>             name=menu.name,
+>             category=menu.category,
+>             image_url=menu.image_url,
+>             price=menu.price,
+>             quantity=new_quantity,
+>             subtotal=menu.price * new_quantity,
+>         )
+>         self._cart_repo.save_item(item)
+>         return self._build_cart()
+  
+>     def update_item(self, menu_id: int, quantity: int) -> Cart:
+>         existing = self._cart_repo.get_item(menu_id)
+>         if existing is None:
+>             raise HTTPException(status_code=404, detail="장바구니에 해당 메뉴가 없습니다.")
+>         updated = CartItem(
+>             menu_id=existing.menu_id,
+>             name=existing.name,
+>             category=existing.category,
+>             image_url=existing.image_url,
+>             price=existing.price,
+>             quantity=quantity,
+>             subtotal=existing.price * quantity,
+>         )
+>         self._cart_repo.save_item(updated)
+>         return self._build_cart()
+  
+>     def remove_item(self, menu_id: int) -> Cart:
+>         removed = self._cart_repo.remove_item(menu_id)
+>         if not removed:
+>             raise HTTPException(status_code=404, detail="장바구니에 해당 메뉴가 없습니다.")
+>         return self._build_cart()
+  
+>     def get_cart(self) -> Cart:
+>         return self._build_cart()
+  
+>     def clear_cart(self) -> Cart:
+>         self._cart_repo.clear()
+>         return self._build_cart()

@@ -1,0 +1,19 @@
+> import json
+> from pathlib import Path
+  
+> from app.schemas.menu import MenuItem
+  
+  
+> class MenuRepository:
+>     def __init__(self, data_file: Path | None = None) -> None:
+>         default_path = Path(__file__).resolve().parents[1] / "data" / "sample_menus.json"
+>         self._data_file = data_file or default_path
+  
+>     def list_menus(self, category: str | None = None) -> list[MenuItem]:
+>         with self._data_file.open("r", encoding="utf-8") as fp:
+>             raw_items = json.load(fp)
+  
+>         items = [MenuItem.model_validate(item) for item in raw_items]
+>         if category:
+>             return [item for item in items if item.category.lower() == category.lower()]
+>         return items

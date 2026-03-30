@@ -63,3 +63,34 @@ def test_build_theme_css_contains_touch_target_and_cta_style() -> None:
     assert ".order-cta" in css
     assert '.stButton > button[kind="primary"]' in css
     assert "min-height: 44px;" in css
+
+
+def test_build_category_guide_skips_empty_category() -> None:
+    menus = [
+        {"id": 1, "category": "burger"},
+        {"id": 2, "category": "burger"},
+    ]
+    guide = build_category_guide(menus)
+    ids = [item["id"] for item in guide]
+    assert "all" in ids
+    assert "burger" in ids
+    assert "side" not in ids
+    assert "drink" not in ids
+
+
+def test_resolve_menu_description_burger_category_fallback() -> None:
+    menu = {"id": 999, "name": "Unknown Burger", "category": "burger"}
+    description = resolve_menu_description(menu)
+    assert "버거" in description
+
+
+def test_resolve_menu_description_drink_category_fallback() -> None:
+    menu = {"id": 999, "name": "Unknown Drink", "category": "drink"}
+    description = resolve_menu_description(menu)
+    assert "음료" in description
+
+
+def test_resolve_menu_description_unknown_category_fallback() -> None:
+    menu = {"id": 999, "name": "Unknown Item", "category": "dessert"}
+    description = resolve_menu_description(menu)
+    assert "키오스크" in description

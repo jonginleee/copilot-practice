@@ -1,0 +1,18 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": "mkdir -p logs && printf 'Session started: %s\n' \"$(date)\" >> logs/copilot-session.log",
+        "windows": "New-Item -ItemType Directory -Force logs | Out-Null; Add-Content -Path logs/copilot-session.log -Value \"Session started: $(Get-Date -Format 'ddd MMM dd HH:mm:ss K yyyy')\""
+      }
+    ],
+    "Stop": [
+      {
+        "type": "command",
+        "command": "mkdir -p logs && printf 'Session ended: %s\n' \"$(date)\" >> logs/copilot-session.log",
+        "windows": "New-Item -ItemType Directory -Force logs | Out-Null; Add-Content -Path logs/copilot-session.log -Value \"Session ended: $(Get-Date -Format 'ddd MMM dd HH:mm:ss K yyyy')\""
+      }
+    ]
+  }
+}

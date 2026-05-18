@@ -38,11 +38,18 @@
 ### 프로젝트 구조
 
 ```
-2. GitHub Copilot 여러 기능 알아보기/
-├── src/
-    ├── bank_account.py    # 은행 계좌 관리 실습용
-    └── invoice.py         # 송장 계산 실습용
+Day1/
+└── Practice 2-1/
+    ├── Readme.md
+    ├── Start/
+    │   ├── bank_account.py
+    │   └── invoice.py
+    └── Completed/
+        ├── bank_account.py
+        └── invoice.py
 ```
+
+실습은 `Day1\Practice 2-1\Start` 폴더를 VS Code에서 열고 진행합니다.
 
 ### 가상환경 설정
 
@@ -50,7 +57,7 @@ CMD에서 다음 명령을 실행하세요:
 
 ```cmd
 # 프로젝트 폴더로 이동
-cd "Day1\2. GitHub Copilot 여러 기능 알아보기"
+cd "Day1\Practice 2-1\Start"
 
 # 가상환경 생성
 python -m venv .venv
@@ -72,7 +79,7 @@ python -m venv .venv
 ### 실습 단계
 
 #### 1단계: bank_account.py 파일 열기
-1. `src/bank_account.py` 파일을 엽니다.
+1. `bank_account.py` 파일을 엽니다.
 2. 파일 구조를 확인합니다.
 
 #### 2단계: TODO 주석 작성하기
@@ -169,7 +176,7 @@ python -m venv .venv
 2. Chat view가 열리면 새 대화를 시작합니다.
 
 #### 2단계: 코드 기반 질문
-1. `src/bank_account.py` 파일을 엽니다.
+1. `bank_account.py` 파일을 엽니다.
 2. Chat에 다음 질문을 입력합니다.
 
 ```text
@@ -204,7 +211,7 @@ BankAccount.deposit/withdraw의 예외 정책이 합리적인지 설명해줘.
 ### 실습 단계
 
 #### 1단계: statement() 메서드 선택
-1. `src/bank_account.py`에서 `statement()` 메서드 전체를 선택합니다.
+1. `bank_account.py`에서 `statement()` 메서드 전체를 선택합니다.
 
 #### 2단계: 인라인 채팅 시작
 1. `Ctrl+I`를 누릅니다.
@@ -246,7 +253,7 @@ ledger가 비어 있으면 빈 문자열을 반환해줘.
 3. 현재 환경에서 보이는 명령 목록을 확인합니다.
 
 #### 2단계: /fix로 버그 수정
-1. `src/bank_account.py`의 `withdraw()` 메서드에 의도적으로 버그를 만듭니다.
+1. `bank_account.py`의 `withdraw()` 메서드에 의도적으로 버그를 만듭니다.
 
    ```python
    def withdraw(self, amount: int) -> None:

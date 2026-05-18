@@ -40,8 +40,8 @@
 
 ## 실습 진행
 
-- `Practice1/Start` 폴더를 VS Code에서 폴더 열기로 열어 아래 가이드에 따라 실습을 진행한다.
-- `Practice1/Complete` 폴더에서 완료된 코드를 참고 할 수 있다.
+- `Day2/Practice2/Start` 폴더를 VS Code에서 폴더 열기로 열어 아래 가이드에 따라 실습을 진행한다.
+- `Day2/Practice2/Complete` 폴더에서 완료된 코드를 참고 할 수 있다.
 
 ---
 

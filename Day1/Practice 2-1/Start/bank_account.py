@@ -23,10 +23,15 @@ class BankAccount:
         return self._balance
 
     def deposit(self, amount: int) -> None:
-        raise NotImplementedError
+        if amount <= 0:
+            raise ValueError("amount must be > 0")
+        self._balance += amount
+        self.ledger.append(Transaction("deposit", amount, self._balance))
 
     def withdraw(self, amount: int) -> None:
-        raise NotImplementedError
+        if amount <= 0:
+            raise ValueError("amount must be > 0")
+        
 
     def statement(self) -> str:
         raise NotImplementedError
